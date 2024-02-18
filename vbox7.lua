@@ -15,6 +15,7 @@ local item_user = nil
 local url_count = 0
 local tries = 0
 local downloaded = {}
+local seen_200 = {}
 local addedtolist = {}
 local abortgrab = false
 local killgrab = false
@@ -590,6 +591,12 @@ wget.callbacks.httploop_result = function(url, err, http_stat)
     end
   end
 
+  if seen_200[url["url"]] then
+    print("Received data incomplete.")
+    abort_item()
+    return false
+  end
+
   if abortgrab then
     abort_item()
     return wget.actions.EXIT
@@ -616,6 +623,9 @@ wget.callbacks.httploop_result = function(url, err, http_stat)
     os.execute("sleep " .. sleep_time)
     return wget.actions.CONTINUE
   else
+    if status_code == 200 then
+      seen_200[url["url"]] = true
+    end
     downloaded[url["url"]] = true
   end
 
