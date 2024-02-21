@@ -594,7 +594,7 @@ wget.callbacks.httploop_result = function(url, err, http_stat)
   if seen_200[url["url"]] then
     print("Received data incomplete.")
     abort_item()
-    return false
+    return wget.actions.EXIT
   end
 
   if abortgrab then
